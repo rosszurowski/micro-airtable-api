@@ -1,6 +1,6 @@
 # `micro-airtable-api` 💨
 
-Quickly make a read-only API from an [Airtable](https://airtable.com/) sheet. Use Airtable as a CMS or database without any hassle.
+Quickly make an API from an [Airtable](https://airtable.com/) sheet. Use Airtable as a CMS or database without any hassle.
 
 ## Setup
 
@@ -14,10 +14,15 @@ $ now rosszurowski/micro-airtable-api -e AIRTABLE_BASE_ID=asdf123 -e AIRTABLE_AP
 
 You can get your _Base ID_ from the [Airtable API docs](https://airtable.com/api) and _API key_ from [your account settings](https://airtable.com/account).
 
+## Details
 
-## Demo
+This micro-service is a proxy for an Airtable API. It follows the same specs as Airtable's api documentation, except without the base ID in the URL. This means requests like:
 
-Coming soon…
+```bash
+curl https://api.airtable.com/v0/appAB2eD31svWoks9/Table
+# is the same as
+curl https://micro-airtable-api-asdasd.now.sh/v0/Table
+```
 
 ## License
 

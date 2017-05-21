@@ -26,4 +26,4 @@ curl https://micro-airtable-api-asdasd.now.sh/v0/Table
 
 ## License
 
-Copyright ©️ 2017 Ross Zurowski, licensed under the MIT License. See [`LICENSE.md`](https://github.com/rosszurowski/micro-airtable-proxy/blob/master/LICENSE.md) for more information.
+Copyright ©️ 2017 Ross Zurowski, licensed under the MIT License. See [`LICENSE.md`](https://github.com/rosszurowski/micro-airtable-api/blob/master/LICENSE.md) for more information.

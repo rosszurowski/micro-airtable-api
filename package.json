@@ -1,0 +1,14 @@
+{
+  "name": "micro-airtable-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^4.0.0",
+    "http-proxy": "^1.16.2",
+    "path-match": "^1.2.4"
+  }
+}

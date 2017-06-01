@@ -14,15 +14,22 @@ $ now rosszurowski/micro-airtable-api -e AIRTABLE_BASE_ID=asdf123 -e AIRTABLE_AP
 
 You can find your _Base ID_ in the [Airtable API docs](https://airtable.com/api) and _API key_ in [your Airtable account settings](https://airtable.com/account).
 
+Once deployed, you can load your data:
+
+```
+https://micro-airtable-api-asdasd.now.sh/v0/Table
+```
+
 ## Details
 
-This micro-service is a proxy for an Airtable API. It follows the same specs as Airtable's api documentation, except without the base ID in the URL. This means requests like:
+Airtable already offers [an API](https://airtable.com/api), but using it on the client-side means you would need to expose your API key, which gives anyone read-write permissions to your table.
 
-```bash
-curl https://api.airtable.com/v0/appAB2eD31svWoks9/Table
-# is the same as
-curl https://micro-airtable-api-asdasd.now.sh/v0/Table
-```
+`micro-airtable-api` proxies an Airtable sheet, letting you hide your API key and (coming soon) mark an API as read-only, making Airtable a cheap-and-easy CMS for blogs and sites.
+
+## Todo
+
+- [ ] [Read-only API](https://github.com/rosszurowski/micro-airtable-api/issues/2)
+- [ ] [Remapping column names](https://github.com/rosszurowski/micro-airtable-api/issues/3)
 
 ## License
 

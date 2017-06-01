@@ -1,6 +1,6 @@
 # `micro-airtable-api` 💨
 
-Quickly make an API from an [Airtable](https://airtable.com/) sheet. Use Airtable as a CMS or database without any hassle.
+Quickly make an API from an [Airtable](https://airtable.com/). Use it as a database or CMS without any hassle.
 
 ## Setup
 
@@ -12,7 +12,7 @@ $ now rosszurowski/micro-airtable-api -e AIRTABLE_BASE_ID=asdf123 -e AIRTABLE_AP
 > Deployment complete! https://micro-airtable-api-asfdasdf.now.sh
 ```
 
-You can get your _Base ID_ from the [Airtable API docs](https://airtable.com/api) and _API key_ from [your account settings](https://airtable.com/account).
+You can find your _Base ID_ in the [Airtable API docs](https://airtable.com/api) and _API key_ in [your Airtable account settings](https://airtable.com/account).
 
 ## Details
 

@@ -64,8 +64,7 @@ Sets the port for the local server. Defaults to `3000`.
 
 - [x] [Read-only API](https://github.com/rosszurowski/micro-airtable-api/issues/2)
 - [ ] [Remapping column names](https://github.com/rosszurowski/micro-airtable-api/issues/3)
-- [ ] [Add request caching to get around ]()
-- [ ] [Switch to koa/micro]()
+- [ ] [Add request caching to get around rate limits](https://github.com/rosszurowski/micro-airtable-api/issues/5)
 
 ## License
 

@@ -1,5 +1,5 @@
 require('dotenv').config();
-const assert = require('assert');
+
 const http = require('http');
 const httpProxy = require('http-proxy');
 const parse = require('url').parse;
@@ -7,9 +7,20 @@ const route = require('path-match')();
 
 const isUndefined = val => typeof val === 'undefined';
 
-const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
-const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
-const PORT = process.env.PORT || 3000;
+const AIRTABLE_HTTP_METHODS = ['GET', 'POST', 'PATCH', 'DELETE'];
+
+const {
+  AIRTABLE_BASE_ID,
+  AIRTABLE_API_KEY,
+  AIRTABLE_ALLOWED_METHODS = AIRTABLE_HTTP_METHODS.join(','),
+  PORT = 3000,
+  READ_ONLY,
+} = process.env;
+
+const allowedMethods = READ_ONLY === 'true'
+  ? ['GET']
+  : AIRTABLE_ALLOWED_METHODS.split(',');
+const allMethods = ['OPTIONS', ...allowedMethods];
 
 if (isUndefined(AIRTABLE_BASE_ID) || isUndefined(AIRTABLE_API_KEY)) {
   console.error(`Error: Please provide AIRTABLE_BASE_ID and AIRTABLE_API_KEY as environment variables.`);
@@ -31,11 +42,37 @@ const proxy = httpProxy.createProxyServer({
 
 proxy.on('error', (err, req, res) => {
   res.writeHead(500, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify(`An unknown error occurred: ${err.message}`));
+  res.end(JSON.stringify({
+    code: 'Internal Server Error',
+    message: `An unknown error occurred: ${err.message}`
+  }));
 });
 
 const match = route('/:version/*');
 const server = http.createServer((req, res) => {
+  const method = req.method && req.method.toUpperCase && req.method.toUpperCase();
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Request-Method', '*');
+  res.setHeader('Access-Control-Allow-Methods', allMethods.join(','));
+  res.setHeader('Access-Control-Allow-Headers', '*');
+
+  if (method === 'OPTIONS') {
+    res.setHeader('Content-Length', '0');
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
+  if (!allowedMethods.includes(method)) {
+    res.writeHead(405, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      code: 'Method Not Allowed',
+      message: `This API does not allow '${req.method}' requests`
+    }))
+    return;
+  }
+
   const originalPath = parse(req.url).path;
   const params = match(originalPath);
   const rest = params[0] || '';

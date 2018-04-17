@@ -1,4 +1,4 @@
-# `micro-airtable-api`
+# micro-airtable-api
 
 Quickly make an API from an [Airtable](https://airtable.com/). Use it as a database or CMS without any hassle.
 

@@ -1,6 +1,8 @@
-# `micro-airtable-api` 💨
+# `micro-airtable-api`
 
 Quickly make an API from an [Airtable](https://airtable.com/). Use it as a database or CMS without any hassle.
+
+:construction: This project has not been thoroughly tested. Use at your own risk!
 
 ## Setup
 
@@ -20,16 +22,50 @@ Once deployed, you can load your data:
 https://micro-airtable-api-asdasd.now.sh/v0/Table
 ```
 
+Read below for [all configurable options](#configuration).
+
 ## Details
 
-Airtable already offers [an API](https://airtable.com/api), but using it on the client-side means you would need to expose your API key, which gives anyone read-write permissions to your table.
+Airtable offers [an API](https://airtable.com/api) for your tables, but using it on the client-side exposes your API key, giving anyone read-write permissions to your table.
 
-`micro-airtable-api` proxies an Airtable sheet, letting you hide your API key and (coming soon) mark an API as read-only, making Airtable a cheap-and-easy CMS for blogs and sites.
+`micro-airtable-api` proxies an Airtable API, letting you hide your key and optionally mark an API as read-only, making Airtable a cheap-and-easy CMS for blogs and sites.
+
+## Configuration
+
+`micro-airtable-api` supports a few different options through environment variables for easy deployment.
+
+#### `AIRTABLE_BASE_ID` (required)
+
+The _Base ID_ of the Airtable you want to connect to. You can find this in your [Airtable API docs](https://airtable.com/api).
+
+#### `AIRTABLE_API_KEY` (required)
+
+Your personal account API key. You can find this in [your account settings](https://airtable.com/account).
+
+#### `READ_ONLY`
+
+A shortcut flag to restrict the API to only `GET` requests. Users of the API will be able to list all records and individual records, but not create, update, or delete.
+
+#### `ALLOWED_METHODS`
+
+A comma-separated list of allowed HTTP methods for this API. Use this to restrict how users can interact with your API. For example, allow creating new records but not deleting by passing in a string without the delete method: `ALLOWED_METHODS=GET,POST,PATCH`.
+
+The `OPTIONS` method is always allowed for [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) purposes.
+
+The `READ_ONLY` flag is a shortcut to set `ALLOWED_METHODS=GET`.
+
+Defaults to every method supported by Airtable: `GET,POST,PATCH,DELETE`.
+
+#### `PORT`
+
+Sets the port for the local server. Defaults to `3000`.
 
 ## Todo
 
-- [ ] [Read-only API](https://github.com/rosszurowski/micro-airtable-api/issues/2)
+- [x] [Read-only API](https://github.com/rosszurowski/micro-airtable-api/issues/2)
 - [ ] [Remapping column names](https://github.com/rosszurowski/micro-airtable-api/issues/3)
+- [ ] [Add request caching to get around ]()
+- [ ] [Switch to koa/micro]()
 
 ## License
 

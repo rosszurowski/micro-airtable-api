@@ -2,6 +2,8 @@
 
 Quickly make an API from an [Airtable](https://airtable.com/) sheet. Use Airtable as a CMS or database without any hassle.
 
+:construction: This project has not been thoroughly tested. Use at your own risk!
+
 ## Setup
 
 To use [`now`](https://now.sh/) and deploy with a single command:

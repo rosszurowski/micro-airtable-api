@@ -7,19 +7,18 @@ const route = require('path-match')();
 
 const isUndefined = val => typeof val === 'undefined';
 
-const AIRTABLE_HTTP_METHODS = ['GET', 'POST', 'PATCH', 'DELETE'];
+const AIRTABLE_HTTP_METHODS = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE'];
+const AIRTABLE_HTTP_HEADERS = ['Content-Type', 'Authorization', 'Content-Length', 'X-Requested-With', 'X-Api-Version', 'X-Airtable-Application-Id', 'User-Agent', 'X-Airtable-User-Agent']
 
 const {
   AIRTABLE_BASE_ID,
   AIRTABLE_API_KEY,
-  AIRTABLE_ALLOWED_METHODS = AIRTABLE_HTTP_METHODS.join(','),
+  ALLOWED_METHODS = AIRTABLE_HTTP_METHODS.join(','),
   PORT = 3000,
   READ_ONLY,
 } = process.env;
 
-const allowedMethods = READ_ONLY === 'true'
-  ? ['GET']
-  : AIRTABLE_ALLOWED_METHODS.split(',');
+const allowedMethods = READ_ONLY === 'true' ? ['GET'] : ALLOWED_METHODS.split(',');
 const allMethods = ['OPTIONS', ...allowedMethods];
 
 if (isUndefined(AIRTABLE_BASE_ID) || isUndefined(AIRTABLE_API_KEY)) {
@@ -55,7 +54,7 @@ const server = http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Request-Method', '*');
   res.setHeader('Access-Control-Allow-Methods', allMethods.join(','));
-  res.setHeader('Access-Control-Allow-Headers', '*');
+  res.setHeader('Access-Control-Allow-Headers', AIRTABLE_HTTP_HEADERS.join(','));
 
   if (method === 'OPTIONS') {
     res.setHeader('Content-Length', '0');
@@ -94,5 +93,5 @@ server.listen(PORT, (err) => {
     process.exit(1);
   }
 
-  console.log(`micro-airtable-proxy listening on port ${PORT}`);
+  console.log(`micro-airtable-api listening on port ${PORT}`);
 });

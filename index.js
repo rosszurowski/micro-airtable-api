@@ -6,11 +6,22 @@ const httpProxy = require('http-proxy');
 const parse = require('url').parse;
 const route = require('path-match')();
 
+const ALLOWED_HTTP_HEADERS = [
+  'Authorization',
+  'Content-Type',
+  'Content-Length',
+  'User-Agent',
+  'X-Airtable-Application-ID',
+  'X-Airtable-User-Agent',
+  'X-API-Version',
+  'X-Requested-With',
+];
+
 const proxy = httpProxy.createProxyServer({
   changeOrigin: true,
   headers: {
     'Accept': 'application/json',
-    'Authorization': `Bearer ${config.AIRTABLE_API_KEY}`,
+    'Authorization': `Bearer ${config.airtableApiKey}`,
   },
   target: 'https://api.airtable.com',
   secure: false,
@@ -33,8 +44,8 @@ const server = http.createServer((req, res) => {
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Request-Method', '*');
-  res.setHeader('Access-Control-Allow-Methods', config.allMethods.join(','));
-  res.setHeader('Access-Control-Allow-Headers', config.AIRTABLE_HTTP_HEADERS.join(','));
+  res.setHeader('Access-Control-Allow-Methods', ['OPTIONS', ...config.allowedMethods].join(','),);
+  res.setHeader('Access-Control-Allow-Headers', ALLOWED_HTTP_HEADERS.join(','));
 
   if (method === 'OPTIONS') {
     res.setHeader('Content-Length', '0');
@@ -59,7 +70,7 @@ const server = http.createServer((req, res) => {
   let path = originalPath;
 
   if (params !== false) {
-    path = `/${params.version}/${config.AIRTABLE_BASE_ID}/${rest}`;
+    path = `/${params.version}/${config.airtableBaseId}/${rest}`;
   }
 
   req.url = path;
@@ -67,11 +78,11 @@ const server = http.createServer((req, res) => {
   proxy.web(req, res);
 });
 
-server.listen(config.PORT, (err) => {
+server.listen(config.port, (err) => {
   if (err) {
     console.error(err);
     process.exit(1);
   }
 
-  console.log(`micro-airtable-api listening on port ${config.PORT}`);
+  console.log(`micro-airtable-api listening on port ${config.port}`);
 });

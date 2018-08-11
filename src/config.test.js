@@ -27,7 +27,7 @@ describe('config', () => {
     };
   });
 
-  test('config returns default results when API Key and Base variables set', () => {
+  it('returns the default config when only API Key and Base ID are set', () => {
     process.env = {
       AIRTABLE_API_KEY: 'YourApiKey',
       AIRTABLE_BASE_ID: 'YourBaseId',
@@ -39,7 +39,7 @@ describe('config', () => {
     expect(config).toEqual(defaultConfig);
   });
 
-  test('config throws error when no env variables set', () => {
+  it('throws an error when no env variables set', () => {
     const exit = jest.spyOn(process, 'exit').mockImplementation(() => undefined);
     const err = jest.spyOn(console, 'error').mockImplementation(() => undefined);
 
@@ -49,7 +49,7 @@ describe('config', () => {
     expect(err).toHaveBeenCalledWith('Error: Please provide AIRTABLE_BASE_ID and AIRTABLE_API_KEY as environment variables.');
   });
 
-  test('config returns correct object when env variables set', () => {
+  it('returns the correct config when env variables are set', () => {
     process.env = {
       ALLOWED_METHODS: 'GET,POST,DELETE',
       AIRTABLE_API_KEY: 'YourApiKey',
@@ -74,7 +74,7 @@ describe('config', () => {
     expect(config).toEqual(expectedConfig);
   });
 
-  test('config returns correct object when readonly is true', () => {
+  it('returns a correct config when readonly is true', () => {
     process.env = {
       AIRTABLE_API_KEY: 'YourApiKey',
       AIRTABLE_BASE_ID: 'YourBaseId',

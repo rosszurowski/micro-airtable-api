@@ -4,11 +4,17 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node index.js"
+    "nodemon": "node_modules/.bin/nodemon --ignore *.test.js index.js",
+    "start": "node index.js",
+    "test": "node_modules/.bin/jest"
   },
   "dependencies": {
     "dotenv": "^4.0.0",
     "http-proxy": "^1.16.2",
     "path-match": "^1.2.4"
+  },
+  "devDependencies": {
+    "jest": "^23.5.0",
+    "nodemon": "^1.18.3"
   }
 }

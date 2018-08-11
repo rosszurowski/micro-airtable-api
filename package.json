@@ -4,9 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "nodemon": "node_modules/.bin/nodemon --ignore *.test.js index.js",
     "start": "node index.js",
-    "test": "node_modules/.bin/jest"
+    "dev": "nodemon --ignore *.test.js index.js",
+    "test": "jest"
   },
   "dependencies": {
     "dotenv": "^4.0.0",

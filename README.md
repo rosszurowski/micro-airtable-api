@@ -62,7 +62,7 @@ Sets the port for the local server. Defaults to `3000`.
 
 ## Local Development
 
-When working locally, you can start the app with [Nodemon](https://www.npmjs.com/package/nodemon) to automatically restart the process when changes are made: `npm run nodemon`.
+When working locally, you can start the app with [Nodemon](https://www.npmjs.com/package/nodemon) to automatically restart the process when changes are made: `npm run dev`.
 
 Run the automated tests (written in [Jest](https://jestjs.io/en/)) with `npm test`.
 

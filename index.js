@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const config = require('./src/config');
+const getConfig = require('./src/config');
 const http = require('http');
 const httpProxy = require('http-proxy');
 const parse = require('url').parse;
@@ -16,6 +16,8 @@ const ALLOWED_HTTP_HEADERS = [
   'X-API-Version',
   'X-Requested-With',
 ];
+
+const config = getConfig(process.env);
 
 const proxy = httpProxy.createProxyServer({
   changeOrigin: true,

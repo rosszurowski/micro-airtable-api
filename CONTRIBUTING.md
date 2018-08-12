@@ -6,6 +6,7 @@
 2. Install dependencies using `npm install` (or `yarn install` if you use yarn)
 3. Run the server in development mode with `npm run dev`, which restarts every time you edit the code
 4. Run the test suite with `npm test`
+4. Run Prettier (to fix style inconsistencies) with `npm prettier`
 
 ### Testing
 

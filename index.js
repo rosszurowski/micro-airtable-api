@@ -1,7 +1,7 @@
-require("dotenv").config();
+require('dotenv').config();
 
-const getConfig = require("./src/config");
-const createServer = require("./src/server");
+const getConfig = require('./src/config');
+const createServer = require('./src/server');
 
 let config;
 
@@ -23,6 +23,6 @@ server.listen(config.port, err => {
 });
 
 function exit(err) {
-  console.error("Error:", err.message);
+  console.error('Error:', err.message);
   process.exit(1);
 }

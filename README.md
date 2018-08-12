@@ -44,6 +44,10 @@ Read below for [all configurable options](#configuration).
 
 Issues and PRs are welcome! If you'd like to contribute code, check out our [guide on how to contribute](https://github.com/rosszurowski/micro-airtable-api/blob/master/CONTRIBUTING.md)
 
+## Updating
+
+The `master` branch of this repository is what you will be deploying. To update to a new version with potential bugfixes, all you have to do is run the `now` command again and change the URL you call in your app!
+
 ## License
 
 [MIT](https://github.com/rosszurowski/micro-airtable-api/blob/master/LICENSE.md)

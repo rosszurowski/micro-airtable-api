@@ -3,5 +3,5 @@ node_js:
   - "node"
 notifications:
   email: false
-script: yarn test --ci
+script: yarn test --ci && yarn run prettier:ci --ci
 cache: yarn

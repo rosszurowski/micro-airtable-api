@@ -2,7 +2,6 @@
   "name": "micro-airtable-api",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon --ignore *.test.js index.js",
@@ -19,5 +18,10 @@
     "jest": "^23.5.0",
     "nodemon": "^1.18.3",
     "prettier": "1.14.2"
-  }
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "license": "MIT"
 }

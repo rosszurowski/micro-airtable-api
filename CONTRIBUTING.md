@@ -9,4 +9,4 @@
 
 ### Testing
 
-Automated tests are written using [Jest](https://jestjs.io/en/). Check out the Jest documentation](https://jestjs.io/docs/en/getting-started) for more details.
+Automated tests are written using [Jest](https://jestjs.io/en/). Check out [the Jest documentation](https://jestjs.io/docs/en/getting-started) for more details.

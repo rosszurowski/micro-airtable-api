@@ -7,8 +7,8 @@
     "start": "node index.js",
     "dev": "nodemon --ignore *.test.js index.js",
     "prettier": "prettier --write 'index.js' 'src/*.js'",
-    "prettier:ci": "prettier --list-different 'index.js' 'src/*.js'",
-    "test": "jest"
+    "lint": "prettier --list-different 'index.js' 'src/*.js'",
+    "test": "npm run lint --silent && jest"
   },
   "dependencies": {
     "dotenv": "^4.0.0",

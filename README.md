@@ -12,6 +12,10 @@ Use Airtable a cheap-and-easy CMS for simple blogs and sites :tada:
 
 ## Setup
 
+There are three ways to run this library and set up your own Airtable proxy:
+
+### Now
+
 To use [`now`](https://now.sh/) and deploy with a single command:
 
 ```bash
@@ -26,8 +30,38 @@ Once deployed, you can read or edit your data at:
 https://micro-airtable-api-asdasd.now.sh/v0/Table
 ```
 
-You can find your _Base ID_ in the [Airtable API docs](https://airtable.com/api) and _API key_ in [your Airtable account settings](https://airtable.com/account).
+### CLI
 
+Install the package globally and run it:
+
+```bash
+$ npm i -g micro-airtable-api
+$ AIRTABLE_BASE_ID=asdf123 AIRTABLE_API_KEY=xyz123 micro-airtable-api
+
+> Starts server on port 3000
+```
+
+### NPM Package
+
+Install the package locally and pass the handler into your webserver:
+
+```
+const http = require('http');
+const airtable = require('micro-airtable-api');
+
+const config = {
+    airtableApiKey: AIRTABLE_API_KEY,
+    airtableBaseId: AIRTABLE_BASE_ID,
+    allowedMethods: ALLOWED_METHODS,
+}
+
+const server = http.createServer(airtable(config));
+```
+
+### Setup Notes
+
+You can find your _Base ID_ in the [Airtable API docs](https://airtable.com/api) and _API key_ in [your Airtable account settings](https://airtable.com/account).
+ 
 Read below for [all configurable options](#configuration).
 
 ## Configuration

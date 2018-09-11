@@ -2,8 +2,9 @@
   "name": "micro-airtable-api",
   "version": "1.0.0",
   "main": "index.js",
+  "bin": "./bin/index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node bin/index.js",
     "dev": "nodemon --ignore *.test.js index.js",
     "prettier": "prettier --write 'index.js' 'src/*.js'",
     "lint": "prettier --list-different 'index.js' 'src/*.js'",

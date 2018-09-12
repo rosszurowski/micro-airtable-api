@@ -5,22 +5,32 @@ describe('getConfig', () => {
     expect(() => {
       getConfig({
         airtableApiKey: undefined,
-        airtableBaseId: 'hello',
+        airtableBaseId: 'YourBaseId',
       });
-    }).toThrow(TypeError);
+    }).toThrow(/airtableApiKey must be/i);
 
     expect(() => {
       getConfig({
-        airtableApiKey: 'hello',
+        airtableApiKey: 'YourApiKey',
         airtableBaseId: undefined,
       });
-    }).toThrow(TypeError);
+    }).toThrow(/airtableBaseId must be/i);
 
     expect(() => {
       getConfig({
-        airtableApiKey: 'hello',
-        airtableBaseId: 'world',
+        airtableApiKey: 'YourApiKey',
+        airtableBaseId: 'YourBaseId',
       });
-    }).not.toThrow(TypeError);
+    }).not.toThrow();
+  });
+
+  it('throws on invalid allowedMethods', () => {
+    expect(() => {
+      getConfig({
+        airtableApiKey: 'YourApiKey',
+        airtableBaseId: 'YourBaseId',
+        allowedMethods: 'GET,POST',
+      });
+    }).toThrow(/allowedMethods must be an array/i);
   });
 });

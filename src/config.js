@@ -1,28 +1,32 @@
-module.exports = env => {
-  const {
-    AIRTABLE_BASE_ID,
-    AIRTABLE_API_KEY,
-    ALLOWED_METHODS = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE'].join(','),
-    PORT = 3000,
-    READ_ONLY,
-  } = env;
-
-  if (
-    typeof AIRTABLE_BASE_ID === 'undefined' ||
-    typeof AIRTABLE_API_KEY === 'undefined'
-  ) {
-    throw new Error(
-      'Please provide AIRTABLE_BASE_ID and AIRTABLE_API_KEY as environment variables.'
-    );
+const invariant = (condition, err) => {
+  if (condition) {
+    return;
   }
 
-  const allowedMethods =
-    READ_ONLY === 'true' ? ['GET'] : ALLOWED_METHODS.split(',');
+  throw err;
+};
 
-  return {
-    airtableApiKey: AIRTABLE_API_KEY,
-    airtableBaseId: AIRTABLE_BASE_ID,
-    allowedMethods,
-    port: PORT,
-  };
+const defaultConfig = {
+  airtableApiKey: null,
+  airtableBaseId: null,
+  allowedMethods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE'],
+};
+
+module.exports = inputConfig => {
+  const config = Object.assign({}, defaultConfig, inputConfig);
+
+  invariant(
+    typeof config.airtableApiKey === 'string',
+    new TypeError('config.airtableApiKey must be a string')
+  );
+  invariant(
+    typeof config.airtableBaseId === 'string',
+    new TypeError('config.airtableBaseId must be a string')
+  );
+  invariant(
+    Array.isArray(config.allowedMethods),
+    new TypeError('config.allowedMethods must be an array')
+  );
+
+  return config;
 };

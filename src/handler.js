@@ -1,6 +1,7 @@
-const httpProxy = require('http-proxy');
 const parse = require('url').parse;
+const httpProxy = require('http-proxy');
 const route = require('path-match')();
+const getConfig = require('./config');
 
 const ALLOWED_HTTP_HEADERS = [
   'Authorization',
@@ -12,14 +13,6 @@ const ALLOWED_HTTP_HEADERS = [
   'X-API-Version',
   'X-Requested-With',
 ];
-
-const invariant = (condition, err) => {
-  if (condition) {
-    return;
-  }
-
-  throw err;
-};
 
 const match = route('/:version/*');
 
@@ -54,26 +47,8 @@ const createProxy = apiKey => {
   return proxy;
 };
 
-const defaultConfig = {
-  allowedMethods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE'],
-};
-
 module.exports = options => {
-  const config = Object.assign({}, defaultConfig, options);
-
-  invariant(
-    typeof config.airtableApiKey === 'string',
-    new TypeError('config.airtableApiKey must be a string')
-  );
-  invariant(
-    typeof config.airtableBaseId === 'string',
-    new TypeError('config.airtableBaseId must be a string')
-  );
-  invariant(
-    Array.isArray(config.allowedMethods),
-    new TypeError('config.allowedMethods must be an array')
-  );
-
+  const config = getConfig(options);
   const proxy = createProxy(config.airtableApiKey);
 
   return (req, res) => {

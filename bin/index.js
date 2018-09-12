@@ -3,16 +3,13 @@
 require('dotenv').config();
 const http = require('http');
 const handler = require('../src/handler');
-const getConfig = require('../src/config');
+const parseEnv = require('../src/parse-env');
 
-let config;
-
-try {
-  config = getConfig(process.env);
-} catch (err) {
+process.on('uncaughtException', err => {
   exit(err);
-}
+});
 
+const config = parseEnv(process.env);
 const server = http.createServer(handler(config));
 
 server.listen(config.port, err => {
@@ -21,7 +18,9 @@ server.listen(config.port, err => {
     return;
   }
 
-  console.log(`micro-airtable-api listening on port ${config.port}`);
+  console.log(
+    `> micro-airtable-api listening on http://localhost:${config.port}`
+  );
 });
 
 function exit(err) {

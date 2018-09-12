@@ -1,5 +1,3 @@
-const isUndefined = val => typeof val === 'undefined';
-
 module.exports = env => {
   const {
     AIRTABLE_BASE_ID,
@@ -9,7 +7,10 @@ module.exports = env => {
     READ_ONLY,
   } = env;
 
-  if (isUndefined(AIRTABLE_BASE_ID) || isUndefined(AIRTABLE_API_KEY)) {
+  if (
+    typeof AIRTABLE_BASE_ID === 'undefined' ||
+    typeof AIRTABLE_API_KEY === 'undefined'
+  ) {
     throw new Error(
       'Please provide AIRTABLE_BASE_ID and AIRTABLE_API_KEY as environment variables.'
     );

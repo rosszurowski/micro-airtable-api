@@ -13,6 +13,14 @@ const ALLOWED_HTTP_HEADERS = [
   'X-Requested-With',
 ];
 
+const invariant = (condition, err) => {
+  if (condition) {
+    return;
+  }
+
+  throw err;
+};
+
 const match = route('/:version/*');
 
 const writeError = (res, status, code, message) => {
@@ -20,12 +28,12 @@ const writeError = (res, status, code, message) => {
   res.end(JSON.stringify({ code, message }));
 };
 
-const createProxy = config => {
+const createProxy = apiKey => {
   const proxy = httpProxy.createProxyServer({
     changeOrigin: true,
     headers: {
       Accept: 'application/json',
-      Authorization: `Bearer ${config.airtableApiKey}`,
+      Authorization: `Bearer ${apiKey}`,
     },
     target: 'https://api.airtable.com',
     secure: false,
@@ -46,48 +54,72 @@ const createProxy = config => {
   return proxy;
 };
 
-module.exports = config => (req, res) => {
-  const proxy = createProxy(config);
+const defaultConfig = {
+  allowedMethods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE'],
+};
 
-  const method =
-    req.method && req.method.toUpperCase && req.method.toUpperCase();
+module.exports = options => {
+  const config = Object.assign({}, defaultConfig, options);
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Request-Method', '*');
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    ['OPTIONS', ...config.allowedMethods].join(',')
+  invariant(
+    typeof config.airtableApiKey === 'string',
+    new TypeError('config.airtableApiKey must be a string')
   );
-  res.setHeader('Access-Control-Allow-Headers', ALLOWED_HTTP_HEADERS.join(','));
+  invariant(
+    typeof config.airtableBaseId === 'string',
+    new TypeError('config.airtableBaseId must be a string')
+  );
+  invariant(
+    Array.isArray(config.allowedMethods),
+    new TypeError('config.allowedMethods must be an array')
+  );
 
-  if (method === 'OPTIONS') {
-    res.setHeader('Content-Length', '0');
-    res.writeHead(204);
-    res.end();
-    return;
-  }
+  const proxy = createProxy(config.airtableApiKey);
 
-  if (!config.allowedMethods.includes(method)) {
-    writeError(
-      res,
-      405,
-      'Method Not Allowed',
-      `This API does not allow '${req.method}' requests`
+  return (req, res) => {
+    const method =
+      req.method && req.method.toUpperCase && req.method.toUpperCase();
+
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Request-Method', '*');
+    res.setHeader(
+      'Access-Control-Allow-Methods',
+      ['OPTIONS', ...config.allowedMethods].join(',')
     );
-    return;
-  }
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      ALLOWED_HTTP_HEADERS.join(',')
+    );
 
-  const originalPath = parse(req.url).path;
-  const params = match(originalPath);
-  const rest = params[0] || '';
+    if (method === 'OPTIONS') {
+      res.setHeader('Content-Length', '0');
+      res.writeHead(204);
+      res.end();
+      return;
+    }
 
-  let path = originalPath;
+    if (!config.allowedMethods.includes(method)) {
+      writeError(
+        res,
+        405,
+        'Method Not Allowed',
+        `This API does not allow '${req.method}' requests`
+      );
+      return;
+    }
 
-  if (params !== false) {
-    path = `/${params.version}/${config.airtableBaseId}/${rest}`;
-  }
+    const originalPath = parse(req.url).path;
+    const params = match(originalPath);
+    const rest = params[0] || '';
 
-  req.url = path;
+    let path = originalPath;
 
-  proxy.web(req, res);
+    if (params !== false) {
+      path = `/${params.version}/${config.airtableBaseId}/${rest}`;
+    }
+
+    req.url = path;
+
+    proxy.web(req, res);
+  };
 };

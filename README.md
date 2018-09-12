@@ -6,7 +6,7 @@ Quickly make an API from an [Airtable](https://airtable.com/). Use it as a datab
 
 Airtable offers [a great API](https://airtable.com/api), but using it on the client-side exposes your API key, giving anyone read-write permissions to your data. `micro-airtable-api` proxies an Airtable API, hiding your API key and letting you control access (eg. marking an API as read-only).
 
-Use Airtable a cheap-and-easy CMS for simple blogs and sites :tada:
+Use Airtable as a cheap-and-easy CMS for simple blogs and sites :tada:
 
 > :construction: This project has not been thoroughly tested. Use at your own risk!
 
@@ -30,6 +30,8 @@ Once deployed, you can read or edit your data at:
 https://micro-airtable-api-asdasd.now.sh/v0/Table
 ```
 
+To update to a new version with potential bugfixes, all you have to do is run the `now` command again and change the URL you call in your app!
+
 ### CLI
 
 Install the package globally and run it:
@@ -41,19 +43,19 @@ $ AIRTABLE_BASE_ID=asdf123 AIRTABLE_API_KEY=xyz123 micro-airtable-api
 > Starts server on port 3000
 ```
 
-### NPM Package
+### JS
 
 Install the package locally and pass the handler into your webserver:
 
-```
+```js
 const http = require('http');
 const airtable = require('micro-airtable-api');
 
 const config = {
-    airtableApiKey: AIRTABLE_API_KEY,
-    airtableBaseId: AIRTABLE_BASE_ID,
-    allowedMethods: ALLOWED_METHODS,
-}
+  airtableApiKey: AIRTABLE_API_KEY,
+  airtableBaseId: AIRTABLE_BASE_ID,
+  allowedMethods: ALLOWED_METHODS,
+};
 
 const server = http.createServer(airtable(config));
 ```
@@ -61,26 +63,22 @@ const server = http.createServer(airtable(config));
 ### Setup Notes
 
 You can find your _Base ID_ in the [Airtable API docs](https://airtable.com/api) and _API key_ in [your Airtable account settings](https://airtable.com/account).
- 
+
 Read below for [all configurable options](#configuration).
 
 ## Configuration
 
 `micro-airtable-api` supports a few different options through environment variables for easy deployment.
 
-* **`AIRTABLE_BASE_ID` (required)** The _Base ID_ of the Airtable you want to connect to. You can find this in your [Airtable API docs](https://airtable.com/api).
-* **`AIRTABLE_API_KEY` (required)** Your personal account API key. You can find this in [your account settings](https://airtable.com/account).
-* `READ_ONLY` A shortcut flag to restrict the API to only `GET` requests. Users of the API will be able to list all records and individual records, but not create, update, or delete.
-* `ALLOWED_METHODS` A comma-separated list of allowed HTTP methods for this API. Use this to restrict how users can interact with your API. For example, allow creating new records but not deleting by passing in a string without the delete method: `ALLOWED_METHODS=GET,POST,PATCH`. The `READ_ONLY` flag is simply a shortcut to `ALLOWED_METHODS=GET`. Note, the `OPTIONS` method is always allowed for [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) purposes.
-* `PORT` Sets the port for the local server. Defaults to `3000`.
+- **`AIRTABLE_BASE_ID` (required)** The _Base ID_ of the Airtable you want to connect to. You can find this in your [Airtable API docs](https://airtable.com/api).
+- **`AIRTABLE_API_KEY` (required)** Your personal account API key. You can find this in [your account settings](https://airtable.com/account).
+- `READ_ONLY` A shortcut flag to restrict the API to only `GET` requests. Users of the API will be able to list all records and individual records, but not create, update, or delete.
+- `ALLOWED_METHODS` A comma-separated list of allowed HTTP methods for this API. Use this to restrict how users can interact with your API. For example, allow creating new records but not deleting by passing in a string without the delete method: `ALLOWED_METHODS=GET,POST,PATCH`. The `READ_ONLY` flag is simply a shortcut to `ALLOWED_METHODS=GET`. Note, the `OPTIONS` method is always allowed for [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) purposes.
+- `PORT` Sets the port for the local server. Defaults to `3000`.
 
 ## Contributing
 
-Issues and PRs are welcome! If you'd like to contribute code, check out our [guide on how to contribute](https://github.com/rosszurowski/micro-airtable-api/blob/master/CONTRIBUTING.md)
-
-## Updating
-
-The `master` branch of this repository is what you will be deploying. To update to a new version with potential bugfixes, all you have to do is run the `now` command again and change the URL you call in your app!
+Issues and PRs are welcome! If you'd like to contribute code, check out our [guide on how to contribute](https://github.com/rosszurowski/micro-airtable-api/blob/master/CONTRIBUTING.md).
 
 ## License
 

@@ -1,7 +1,8 @@
 const parse = require('url').parse;
-const httpProxy = require('http-proxy');
 const route = require('path-match')();
 const getConfig = require('./config');
+const createProxy = require('./create-proxy');
+const writeError = require('./write-error');
 
 const ALLOWED_HTTP_HEADERS = [
   'Authorization',
@@ -15,37 +16,6 @@ const ALLOWED_HTTP_HEADERS = [
 ];
 
 const match = route('/:version/*');
-
-const writeError = (res, status, code, message) => {
-  res.writeHead(status, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify({ code, message }));
-};
-
-const createProxy = apiKey => {
-  const proxy = httpProxy.createProxyServer({
-    changeOrigin: true,
-    headers: {
-      Accept: 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    target: 'https://api.airtable.com',
-    secure: false,
-    ssl: {
-      rejectUnauthorized: false,
-    },
-  });
-
-  proxy.on('error', (err, req, res) => {
-    writeError(
-      res,
-      500,
-      'Internal Server Error',
-      `An unknown error occurred: ${err.message}`
-    );
-  });
-
-  return proxy;
-};
 
 module.exports = options => {
   const config = getConfig(options);

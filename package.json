@@ -5,7 +5,7 @@
   "bin": "./bin/index.js",
   "scripts": {
     "start": "node bin/index.js",
-    "dev": "nodemon --ignore *.test.js index.js",
+    "dev": "nodemon --ignore *.test.js bin/index.js",
     "prettier": "prettier --write 'index.js' 'src/*.js'",
     "lint": "prettier --list-different 'index.js' 'src/*.js'",
     "test": "npm run lint --silent && jest"

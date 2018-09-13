@@ -21,12 +21,12 @@ const writeError = (res, status, code, message) => {
   res.end(JSON.stringify({ code, message }));
 };
 
-const createProxy = config => {
+const createProxy = apiKey => {
   const proxy = httpProxy.createProxyServer({
     changeOrigin: true,
     headers: {
       Accept: 'application/json',
-      Authorization: `Bearer ${config.airtableApiKey}`,
+      Authorization: `Bearer ${apiKey}`,
     },
     target: 'https://api.airtable.com',
     secure: false,

@@ -31,6 +31,6 @@ describe('getConfig', () => {
         airtableBaseId: 'YourBaseId',
         allowedMethods: 'GET,POST',
       });
-    }).toThrow(/allowedMethods must be an array/i);
+    }).toThrow(/allowedMethods must be an array or object/i);
   });
 });

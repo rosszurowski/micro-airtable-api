@@ -2,6 +2,7 @@ const parse = require('url').parse;
 const httpProxy = require('http-proxy');
 const route = require('path-match')();
 const getConfig = require('./config');
+const { isObject } = require('./utils');
 
 const ALLOWED_HTTP_HEADERS = [
   'Authorization',
@@ -47,19 +48,52 @@ const createProxy = apiKey => {
   return proxy;
 };
 
+const getTablePermissions = (config, tableName) => {
+  if (!tableName) {
+    return ['GET', 'PUT', 'POST', 'PATCH', 'DELETE'];
+  }
+
+  const hasRouteSpecificConfig = isObject(config.allowedMethods);
+
+  return hasRouteSpecificConfig
+    ? config.allowedMethods[tableName] || []
+    : config.allowedMethods;
+};
+
 module.exports = options => {
   const config = getConfig(options);
   const proxy = createProxy(config.airtableApiKey);
+  const hasRouteSpecificConfig = isObject(config.allowedMethods);
 
   return (req, res) => {
     const method =
       req.method && req.method.toUpperCase && req.method.toUpperCase();
 
+    const components = parse(req.url);
+    const originalPath = components.path;
+    const params = match(originalPath);
+    const rest = params[0] || '';
+
+    let path = originalPath;
+    let tableName = null;
+
+    if (params !== false) {
+      tableName = rest.split('?').shift();
+
+      path =
+        '/' +
+        [params.version, config.airtableBaseId, params.table + rest].join('/');
+    }
+
+    const tablePermissions = getTablePermissions(config, tableName);
+
+    req.url = path;
+
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Request-Method', '*');
     res.setHeader(
       'Access-Control-Allow-Methods',
-      ['OPTIONS', ...config.allowedMethods].join(',')
+      ['OPTIONS', ...tablePermissions].join(',')
     );
     res.setHeader(
       'Access-Control-Allow-Headers',
@@ -73,27 +107,15 @@ module.exports = options => {
       return;
     }
 
-    if (!config.allowedMethods.includes(method)) {
+    if (!tablePermissions.includes(method)) {
       writeError(
         res,
         405,
         'Method Not Allowed',
-        `This API does not allow '${req.method}' requests`
+        `This API does not allow '${method}' requests for '${tableName}'`
       );
       return;
     }
-
-    const originalPath = parse(req.url).path;
-    const params = match(originalPath);
-    const rest = params[0] || '';
-
-    let path = originalPath;
-
-    if (params !== false) {
-      path = `/${params.version}/${config.airtableBaseId}/${rest}`;
-    }
-
-    req.url = path;
 
     proxy.web(req, res);
   };

@@ -1,3 +1,5 @@
+const { isObject } = require('./utils');
+
 const invariant = (condition, err) => {
   if (condition) {
     return;
@@ -24,8 +26,8 @@ module.exports = inputConfig => {
     new TypeError('config.airtableBaseId must be a string')
   );
   invariant(
-    Array.isArray(config.allowedMethods),
-    new TypeError('config.allowedMethods must be an array')
+    Array.isArray(config.allowedMethods) || isObject(config.allowedMethods),
+    new TypeError('config.allowedMethods must be an array or object')
   );
 
   return config;

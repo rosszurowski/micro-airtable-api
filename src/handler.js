@@ -60,6 +60,18 @@ const getTablePermissions = (config, tableName) => {
     : config.allowedMethods;
 };
 
+const isAllowed = (permissions, method) => {
+  if (permissions === '*') {
+    return true;
+  }
+
+  if (Array.isArray(permissions) && permissions.includes(method)) {
+    return true;
+  }
+
+  return false;
+};
+
 module.exports = options => {
   const config = getConfig(options);
   const proxy = createProxy(config.airtableApiKey);
@@ -107,7 +119,7 @@ module.exports = options => {
       return;
     }
 
-    if (!tablePermissions.includes(method)) {
+    if (!isAllowed(tablePermissions, method)) {
       writeError(
         res,
         405,

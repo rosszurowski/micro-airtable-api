@@ -86,16 +86,15 @@ module.exports = options => {
     const rest = params[0] || '';
 
     let path = originalPath;
-    let tableName = null;
 
     if (params !== false) {
-      tableName = rest.split('?').shift();
       path = `/${params.version}/${config.airtableBaseId}/${rest}`;
     }
 
-    const tablePermissions = getTablePermissions(config, tableName);
-
     req.url = path;
+
+    const tableName = rest.split('?').shift();
+    const tablePermissions = getTablePermissions(config, tableName);
 
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Request-Method', '*');

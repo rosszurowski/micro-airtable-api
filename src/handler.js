@@ -50,7 +50,7 @@ const createProxy = apiKey => {
 
 const getTablePermissions = (config, tableName) => {
   if (!tableName) {
-    return ['GET', 'PUT', 'POST', 'PATCH', 'DELETE'];
+    return '*';
   }
 
   const hasRouteSpecificConfig = isObject(config.allowedMethods);

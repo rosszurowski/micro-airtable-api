@@ -91,9 +91,7 @@ module.exports = options => {
     if (params !== false) {
       tableName = rest.split('?').shift();
 
-      path =
-        '/' +
-        [params.version, config.airtableBaseId, params.table + rest].join('/');
+      path = '/' + [params.version, config.airtableBaseId, rest].join('/');
     }
 
     const tablePermissions = getTablePermissions(config, tableName);

@@ -47,17 +47,20 @@ $ AIRTABLE_BASE_ID=asdf123 AIRTABLE_API_KEY=xyz123 micro-airtable-api
 
 Install the package locally and pass the handler into your webserver:
 
+```bash
+$ npm i micro-airtable-api
+```
+
 ```js
 const http = require('http');
-const airtable = require('micro-airtable-api');
+const createAirtableProxy = require('micro-airtable-api');
 
 const config = {
-  airtableApiKey: AIRTABLE_API_KEY,
-  airtableBaseId: AIRTABLE_BASE_ID,
-  allowedMethods: ALLOWED_METHODS,
+  airtableApiKey: 'YourApiKey',
+  airtableBaseId: 'YourBaseId',
 };
 
-const server = http.createServer(airtable(config));
+const server = http.createServer(createAirtableProxy(config));
 ```
 
 ### Setup Notes

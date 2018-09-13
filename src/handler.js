@@ -75,7 +75,6 @@ const isAllowed = (permissions, method) => {
 module.exports = options => {
   const config = getConfig(options);
   const proxy = createProxy(config.airtableApiKey);
-  const hasRouteSpecificConfig = isObject(config.allowedMethods);
 
   return (req, res) => {
     const method =

@@ -1,6 +1,6 @@
-#! /usr/bin/env node
+#!/usr/bin/env node
 
-require('dotenv').config({path: __dirname + '/../.env'});
+require('dotenv').config({ path: __dirname + '/../.env' });
 const http = require('http');
 const handler = require('../src/handler');
 const parseEnv = require('../src/parse-env');

@@ -5,17 +5,17 @@
   "bin": "./bin/index.js",
   "scripts": {
     "start": "node bin/index.js",
-    "dev": "nodemon --ignore *.test.js index.js",
+    "dev": "nodemon -r dotenv/config --ignore '*.test.js' bin/index.js",
     "prettier": "prettier --write 'index.js' 'src/*.js'",
     "lint": "prettier --list-different 'index.js' 'src/*.js'",
     "test": "npm run lint --silent && jest"
   },
   "dependencies": {
-    "dotenv": "^4.0.0",
     "http-proxy": "^1.16.2",
     "path-match": "^1.2.4"
   },
   "devDependencies": {
+    "dotenv": "^4.0.0",
     "jest": "^23.5.0",
     "nodemon": "^1.18.3",
     "prettier": "1.14.2"

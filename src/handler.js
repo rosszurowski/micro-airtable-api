@@ -1,6 +1,7 @@
-const httpProxy = require('http-proxy');
 const parse = require('url').parse;
+const httpProxy = require('http-proxy');
 const route = require('path-match')();
+const getConfig = require('./config');
 
 const ALLOWED_HTTP_HEADERS = [
   'Authorization',
@@ -20,12 +21,12 @@ const writeError = (res, status, code, message) => {
   res.end(JSON.stringify({ code, message }));
 };
 
-const createProxy = config => {
+const createProxy = apiKey => {
   const proxy = httpProxy.createProxyServer({
     changeOrigin: true,
     headers: {
       Accept: 'application/json',
-      Authorization: `Bearer ${config.airtableApiKey}`,
+      Authorization: `Bearer ${apiKey}`,
     },
     target: 'https://api.airtable.com',
     secure: false,
@@ -46,48 +47,54 @@ const createProxy = config => {
   return proxy;
 };
 
-module.exports = config => (req, res) => {
-  const proxy = createProxy(config);
+module.exports = options => {
+  const config = getConfig(options);
+  const proxy = createProxy(config.airtableApiKey);
 
-  const method =
-    req.method && req.method.toUpperCase && req.method.toUpperCase();
+  return (req, res) => {
+    const method =
+      req.method && req.method.toUpperCase && req.method.toUpperCase();
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Request-Method', '*');
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    ['OPTIONS', ...config.allowedMethods].join(',')
-  );
-  res.setHeader('Access-Control-Allow-Headers', ALLOWED_HTTP_HEADERS.join(','));
-
-  if (method === 'OPTIONS') {
-    res.setHeader('Content-Length', '0');
-    res.writeHead(204);
-    res.end();
-    return;
-  }
-
-  if (!config.allowedMethods.includes(method)) {
-    writeError(
-      res,
-      405,
-      'Method Not Allowed',
-      `This API does not allow '${req.method}' requests`
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Request-Method', '*');
+    res.setHeader(
+      'Access-Control-Allow-Methods',
+      ['OPTIONS', ...config.allowedMethods].join(',')
     );
-    return;
-  }
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      ALLOWED_HTTP_HEADERS.join(',')
+    );
 
-  const originalPath = parse(req.url).path;
-  const params = match(originalPath);
-  const rest = params[0] || '';
+    if (method === 'OPTIONS') {
+      res.setHeader('Content-Length', '0');
+      res.writeHead(204);
+      res.end();
+      return;
+    }
 
-  let path = originalPath;
+    if (!config.allowedMethods.includes(method)) {
+      writeError(
+        res,
+        405,
+        'Method Not Allowed',
+        `This API does not allow '${req.method}' requests`
+      );
+      return;
+    }
 
-  if (params !== false) {
-    path = `/${params.version}/${config.airtableBaseId}/${rest}`;
-  }
+    const originalPath = parse(req.url).path;
+    const params = match(originalPath);
+    const rest = params[0] || '';
 
-  req.url = path;
+    let path = originalPath;
 
-  proxy.web(req, res);
+    if (params !== false) {
+      path = `/${params.version}/${config.airtableBaseId}/${rest}`;
+    }
+
+    req.url = path;
+
+    proxy.web(req, res);
+  };
 };

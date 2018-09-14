@@ -53,7 +53,7 @@ const parseUrl = (originalUrl, airtableBaseId) => {
 
   if (params === false) {
     const originalPath = components.path;
-    return { url: originalPath, tableName: false };
+    return { proxyUrl: originalPath, tableName: false };
   }
 
   const proxyUrl =

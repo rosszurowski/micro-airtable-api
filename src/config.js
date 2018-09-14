@@ -26,7 +26,9 @@ module.exports = inputConfig => {
     new TypeError('config.airtableBaseId must be a string')
   );
   invariant(
-    Array.isArray(config.allowedMethods) || isObject(config.allowedMethods),
+    Array.isArray(config.allowedMethods) ||
+      isObject(config.allowedMethods) ||
+      config.allowedMethods === '*',
     new TypeError('config.allowedMethods must be an array or object')
   );
 

@@ -4,7 +4,7 @@ const route = require('path-match')();
 const getConfig = require('./config');
 const { isObject, compact } = require('./utils');
 
-const ALLOWED_HTTP_HEADERS = [
+const allowedHttpHeaders = [
   'Authorization',
   'Content-Type',
   'Content-Length',
@@ -72,23 +72,26 @@ const parseUrl = (originalUrl, airtableBaseId) => {
   };
 };
 
-const getTablePermissions = (config, tableName) => {
+const allMethods = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE'];
+const getAllowedMethods = (config, tableName) => {
+  let allowedMethods = [];
+
   if (!tableName) {
-    return '*';
+    allowedMethods = allMethods;
+  } else {
+    const hasRouteSpecificConfig = isObject(config.allowedMethods);
+    const configAllowedMethods = hasRouteSpecificConfig
+      ? config.allowedMethods[tableName] || []
+      : config.allowedMethods;
+
+    allowedMethods =
+      configAllowedMethods === '*' ? allMethods : configAllowedMethods;
   }
 
-  const hasRouteSpecificConfig = isObject(config.allowedMethods);
-
-  return hasRouteSpecificConfig
-    ? config.allowedMethods[tableName] || []
-    : config.allowedMethods;
+  return ['OPTIONS', ...allowedMethods];
 };
 
-const isAllowed = (permissions, method) => {
-  if (permissions === '*') {
-    return true;
-  }
-
+const isAllowed = (allowedMethods, method) => {
   if (Array.isArray(permissions) && permissions.includes(method)) {
     return true;
   }
@@ -105,20 +108,14 @@ module.exports = options => {
       req.method && req.method.toUpperCase && req.method.toUpperCase();
 
     const { proxyUrl, tableName } = parseUrl(req.url, config.airtableBaseId);
-    const tablePermissions = getTablePermissions(config, tableName);
+    const allowedMethods = getAllowedMethods(config, tableName);
 
     req.url = proxyUrl;
 
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Request-Method', '*');
-    res.setHeader(
-      'Access-Control-Allow-Methods',
-      ['OPTIONS', ...tablePermissions].join(',')
-    );
-    res.setHeader(
-      'Access-Control-Allow-Headers',
-      ALLOWED_HTTP_HEADERS.join(',')
-    );
+    res.setHeader('Access-Control-Allow-Methods', allowedMethods.join(','));
+    res.setHeader('Access-Control-Allow-Headers', allowedHttpHeaders.join(','));
 
     if (method === 'OPTIONS') {
       res.setHeader('Content-Length', '0');
@@ -127,7 +124,7 @@ module.exports = options => {
       return;
     }
 
-    if (!isAllowed(tablePermissions, method)) {
+    if (!isAllowed(allowedMethods, method)) {
       writeError(
         res,
         405,

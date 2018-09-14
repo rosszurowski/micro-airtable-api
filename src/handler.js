@@ -2,7 +2,7 @@ const parse = require('url').parse;
 const httpProxy = require('http-proxy');
 const route = require('path-match')();
 const getConfig = require('./config');
-const { isObject } = require('./utils');
+const { isObject, compact } = require('./utils');
 
 const ALLOWED_HTTP_HEADERS = [
   'Authorization',
@@ -14,8 +14,6 @@ const ALLOWED_HTTP_HEADERS = [
   'X-API-Version',
   'X-Requested-With',
 ];
-
-const match = route('/:version/*');
 
 const writeError = (res, status, code, message) => {
   res.writeHead(status, { 'Content-Type': 'application/json' });
@@ -46,6 +44,32 @@ const createProxy = apiKey => {
   });
 
   return proxy;
+};
+
+const match = route('/:version/:tableName/:recordId?');
+const parseUrl = (originalUrl, airtableBaseId) => {
+  const components = parse(originalUrl);
+  const params = match(components.pathname);
+
+  if (params === false) {
+    const originalPath = components.path;
+    return { url: originalPath, tableName: false };
+  }
+
+  const proxyUrl =
+    '/' +
+    compact([
+      params.version,
+      airtableBaseId,
+      params.tableName,
+      params.recordId,
+      components.search,
+    ]).join('/');
+
+  return {
+    proxyUrl,
+    tableName: params.tableName,
+  };
 };
 
 const getTablePermissions = (config, tableName) => {
@@ -80,21 +104,10 @@ module.exports = options => {
     const method =
       req.method && req.method.toUpperCase && req.method.toUpperCase();
 
-    const components = parse(req.url);
-    const originalPath = components.path;
-    const params = match(originalPath);
-    const rest = params[0] || '';
-
-    let path = originalPath;
-
-    if (params !== false) {
-      path = `/${params.version}/${config.airtableBaseId}/${rest}`;
-    }
-
-    req.url = path;
-
-    const tableName = rest.split('?').shift();
+    const { proxyUrl, tableName } = parseUrl(req.url, config.airtableBaseId);
     const tablePermissions = getTablePermissions(config, tableName);
+
+    req.url = proxyUrl;
 
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Request-Method', '*');

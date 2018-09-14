@@ -92,7 +92,7 @@ const getAllowedMethods = (config, tableName) => {
 };
 
 const isAllowed = (allowedMethods, method) => {
-  if (Array.isArray(permissions) && permissions.includes(method)) {
+  if (Array.isArray(allowedMethods) && allowedMethods.includes(method)) {
     return true;
   }
 

@@ -53,7 +53,7 @@ const parseUrl = (originalUrl, airtableBaseId) => {
 
   if (params === false) {
     const originalPath = components.path;
-    return { url: originalPath, tableName: false };
+    return { proxyUrl: originalPath, tableName: false };
   }
 
   const proxyUrl =
@@ -92,7 +92,7 @@ const getAllowedMethods = (config, tableName) => {
 };
 
 const isAllowed = (allowedMethods, method) => {
-  if (Array.isArray(permissions) && permissions.includes(method)) {
+  if (Array.isArray(allowedMethods) && allowedMethods.includes(method)) {
     return true;
   }
 

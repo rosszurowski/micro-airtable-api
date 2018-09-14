@@ -1,3 +1,12 @@
+function isJson(str) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
 module.exports = env => {
   const {
     AIRTABLE_BASE_ID,
@@ -25,7 +34,13 @@ module.exports = env => {
   if (READ_ONLY === 'true') {
     config.allowedMethods = ['GET'];
   } else if (ALLOWED_METHODS) {
-    config.allowedMethods = ALLOWED_METHODS.split(',');
+    if (isJson(ALLOWED_METHODS)) {
+      // Allows JSON in the environment variable
+      // eg: ALLOWED_METHODS='{"Posts": ["GET", "PUT"],"Comments": "*"}'
+      config.allowedMethods = JSON.parse(ALLOWED_METHODS);
+    } else {
+      config.allowedMethods = ALLOWED_METHODS.split(',');
+    }
   }
 
   return config;

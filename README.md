@@ -94,8 +94,11 @@ This maps directly to operations on Airtable:
 
 - `GET` allows reading lists of records or individual records
 - `POST` allows creating new records
-- `PATCH` allows updating existing records
+- `PATCH` allows updating specific fields existing records
+- `PUT` allows updating an entire existing record
 - `DELETE` allows removing records.
+
+You can read [Airtable's API documentation](https://airtable.com/api) for more details about how to use these methods.
 
 To create a read-only API, to use as a CMS:
 
@@ -128,7 +131,7 @@ createAirtableProxy({
   airtableApiKeyId: '...',
   allowedMethods: {
     'Blog Posts': ['GET'],
-    'Blog Comments': ['POST', 'PATCH', 'DELETE'],
+    'Blog Comments': ['POST', 'PATCH', 'PUT', 'DELETE'],
   },
 });
 ```
@@ -145,7 +148,7 @@ $ AIRTABLE_BASE_ID=asdf123 AIRTABLE_API_KEY=xyz123 micro-airtable-api
 
 - **`AIRTABLE_BASE_ID` (required)** Same as `config.airtableBaseId` above
 - **`AIRTABLE_API_KEY` (required)** Same as `config.airtableApiKey` above
-- `ALLOWED_METHODS` Similar to `config.allowedMethods` above, except a comma-separated list instead of an array. For example, allow creating new records but not deleting by passing in a string without the delete method: `ALLOWED_METHODS=GET,POST,PATCH`. The CLI does not support table-specific permissions. Use the JS API if this is something you need.
+- `ALLOWED_METHODS` Similar to `config.allowedMethods` above, except a comma-separated list instead of an array. For example, allow creating new records but not deleting by passing in a string without the delete method: `ALLOWED_METHODS=GET,POST,PATCH,PUT`. The CLI does not support table-specific permissions. Use the JS API if this is something you need.
 - `READ_ONLY` A shortcut variable to restrict the API to only `GET` requests. Equivalent to `ALLOWED_METHODS=GET`. Users of the API will be able to list all records and individual records, but not create, update, or delete.
 - `PORT` Sets the port for the local server. Defaults to `3000`.
 

@@ -1,5 +1,6 @@
 const http = require('http');
-const supertest = require('supertest');
+const got = require('got');
+const listen = require('test-listen');
 const handler = require('./index');
 
 const describeIfEnv = (process.env.AIRTABLE_API_KEY && process.env.AIRTABLE_BASE_ID) ? describe : xdescribe;
@@ -8,83 +9,69 @@ const baseConfig = {
   airtableApiKey: process.env.AIRTABLE_API_KEY,
 };
 
-const getExistingPosts = async (server) => {
-  return (await supertest(server).get('/v0/Posts')).body;
+const getExistingPosts = async (client) => {
+  return (await client.get('/v0/Posts', {json: true})).body;
 };
 
 describeIfEnv('micro-airtable-api', () => {
 
   describe('when `allowedMethods="*"`', () => {
+    const config = {...baseConfig, allowedMethods: '*'};
     let server;
+    let client;
 
-    beforeEach(() => {
-      const config = {...baseConfig, allowedMethods: '*'};
+    beforeAll(async () => {
       server = http.createServer(handler(config));
+      const baseUrl = await listen(server);
+      client = got.extend({ baseUrl });
     });
 
     describe('GET /v0/Posts', () => {
-      let response;
-
-      beforeEach(async () => {
-        response = await supertest(server).get('/v0/Posts');
+      it('returns successful response', async () => {
+        await client.get('/v0/Posts');
       });
-
-      it('returns successful response', () => expect(response.statusCode).toBe(200));
-      it('contains a response body', () => expect(response.body).toBeTruthy());
     });
 
     describe('POST /v0/Posts', () => {
-      let response;
-
-      beforeEach(async () => {
-        response = await supertest(server)
-          .post('/v0/Posts')
-          .send({fields: {title: 'Test POST request'}});
+      it('returns successful response', async () => {
+        await client.post('/v0/Posts', {
+          json: true,
+          headers: {'Content-type': 'application/json'},
+          body: {fields: {title: 'Test POST request'}},
+        });
       });
-
-      it('returns successful response', () => expect(response.statusCode).toBe(200));
-      it('contains a response body', () => expect(response.body).toBeTruthy());
     });
 
     describe('PUT /v0/Posts/:id', () => {
-      let response;
+      it('returns successful response', async () => {
+        const post = (await getExistingPosts(client)).records[0];
 
-      beforeEach(async () => {
-        const post = (await getExistingPosts(server)).records[0];
-        response = await supertest(server)
-          .put(`/v0/Posts/${post.id}`)
-          .send({fields: {title: 'Test PUT request'}});
+        await client.put(`/v0/Posts/${post.id}`, {
+          json: true,
+          headers: {'Content-type': 'application/json'},
+          body: {fields: {title: 'Test PUT request'}},
+        });
       });
-
-      it('returns successful response', () => expect(response.statusCode).toBe(200));
-      it('contains a response body', () => expect(response.body).toBeTruthy());
     });
 
     describe('PATCH /v0/Posts/:id', () => {
-      let response;
+      it('returns successful response', async () => {
+        const post = (await getExistingPosts(client)).records[0];
 
-      beforeEach(async () => {
-        const post = (await getExistingPosts(server)).records[0];
-        response = await supertest(server)
-          .patch(`/v0/Posts/${post.id}`)
-          .send({fields: {title: 'Test PATCH request'}});
+        await client.patch(`/v0/Posts/${post.id}`, {
+          json: true,
+          headers: {'Content-type': 'application/json'},
+          body: {fields: {title: 'Test PATCH request'}},
+        });
       });
-
-      it('returns successful response', () => expect(response.statusCode).toBe(200));
-      it('contains a response body', () => expect(response.body).toBeTruthy());
     });
 
     describe('DELETE /v0/Posts/:id', () => {
-      let response;
+      it('returns successful response', async () => {
+        const post = (await getExistingPosts(client)).records[0];
 
-      beforeEach(async () => {
-        const post = (await getExistingPosts(server)).records[0];
-        response = await supertest(server).delete(`/v0/Posts/${post.id}`);
+        await client.delete(`/v0/Posts/${post.id}`);
       });
-
-
-      it('returns successful response', () => expect(response.statusCode).toBe(200));
-      it('contains a response body', () => expect(response.body).toBeTruthy());
     });
   });
 });

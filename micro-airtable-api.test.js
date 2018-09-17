@@ -1,25 +1,27 @@
 const http = require('http');
 const supertest = require('supertest');
-const handler = require('./src/handler');
-const parseEnv = require('./src/parse-env');
+const handler = require('./index');
 
 const describeIfEnv = (process.env.AIRTABLE_API_KEY && process.env.AIRTABLE_BASE_ID) ? describe : xdescribe;
+const baseConfig = {
+  airtableBaseId: process.env.AIRTABLE_BASE_ID,
+  airtableApiKey: process.env.AIRTABLE_API_KEY,
+};
 
 const getExistingPosts = async () => {
-  const config = parseEnv(process.env);
-  const server = http.createServer(handler(config));
+  const server = http.createServer(handler(baseConfig));
 
   return (await supertest(server).get('/v0/Posts')).body;
 };
 
 describeIfEnv('integration', () => {
-  this.config = parseEnv(process.env);
+  let config;
 
   describe('allowedMethods "*"', () => {
 
     beforeEach(() => {
-      this.config.allowedMethods = '*';
-      this.server = http.createServer(handler(this.config));
+      config = {...baseConfig, allowedMethods: '*'};
+      this.server = http.createServer(handler(config));
     });
 
     it('Can make GET request', async () => {

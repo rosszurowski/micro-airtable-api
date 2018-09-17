@@ -8,24 +8,22 @@ const baseConfig = {
   airtableApiKey: process.env.AIRTABLE_API_KEY,
 };
 
-const getExistingPosts = async () => {
-  const server = http.createServer(handler(baseConfig));
-
+const getExistingPosts = async (server) => {
   return (await supertest(server).get('/v0/Posts')).body;
 };
 
 describeIfEnv('integration', () => {
-  let config;
 
   describe('allowedMethods "*"', () => {
+    let server;
 
     beforeEach(() => {
-      config = {...baseConfig, allowedMethods: '*'};
-      this.server = http.createServer(handler(config));
+      const config = {...baseConfig, allowedMethods: '*'};
+      server = http.createServer(handler(config));
     });
 
     it('Can make GET request', async () => {
-      this.response = await supertest(this.server)
+      this.response = await supertest(server)
         .get('/v0/Posts');
 
       expect(this.response.statusCode).toBe(200);
@@ -33,7 +31,7 @@ describeIfEnv('integration', () => {
     });
 
     it('Can make POST request', async () => {
-      this.response = await supertest(this.server)
+      this.response = await supertest(server)
         .post('/v0/Posts')
         .send({fields: {title: 'Test POST request'}});
 
@@ -42,9 +40,9 @@ describeIfEnv('integration', () => {
     });
 
     it('Can make PUT request', async () => {
-      const post = (await getExistingPosts()).records[0];
+      const post = (await getExistingPosts(server)).records[0];
 
-      this.response = await supertest(this.server)
+      this.response = await supertest(server)
         .put(`/v0/Posts/${post.id}`)
         .send({fields: {title: 'Test PUT request'}});
 
@@ -53,9 +51,9 @@ describeIfEnv('integration', () => {
     });
 
     it('Can make PATCH request', async () => {
-      const post = (await getExistingPosts()).records[0];
+      const post = (await getExistingPosts(server)).records[0];
 
-      this.response = await supertest(this.server)
+      this.response = await supertest(server)
       .patch(`/v0/Posts/${post.id}`)
       .send({fields: {title: 'Test PATCH request'}});
 
@@ -64,9 +62,9 @@ describeIfEnv('integration', () => {
     });
 
     it('Can make DELETE request', async () => {
-      const post = (await getExistingPosts()).records[0];
+      const post = (await getExistingPosts(server)).records[0];
 
-      this.response = await supertest(this.server)
+      this.response = await supertest(server)
       .delete(`/v0/Posts/${post.id}`);
 
       expect(this.response.statusCode).toBe(200);

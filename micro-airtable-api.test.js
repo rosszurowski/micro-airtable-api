@@ -12,9 +12,9 @@ const getExistingPosts = async (server) => {
   return (await supertest(server).get('/v0/Posts')).body;
 };
 
-describeIfEnv('integration', () => {
+describeIfEnv('micro-airtable-api', () => {
 
-  describe('allowedMethods "*"', () => {
+  describe('when `allowedMethods="*"`', () => {
     let server;
 
     beforeEach(() => {
@@ -22,53 +22,69 @@ describeIfEnv('integration', () => {
       server = http.createServer(handler(config));
     });
 
-    it('Can make GET request', async () => {
-      this.response = await supertest(server)
-        .get('/v0/Posts');
+    describe('GET /v0/Posts', () => {
+      let response;
 
-      expect(this.response.statusCode).toBe(200);
-      expect(this.response.body).toBeTruthy();
+      beforeEach(async () => {
+        response = await supertest(server).get('/v0/Posts');
+      });
+
+      it('returns successful response', () => expect(response.statusCode).toBe(200));
+      it('contains a response body', () => expect(response.body).toBeTruthy());
     });
 
-    it('Can make POST request', async () => {
-      this.response = await supertest(server)
-        .post('/v0/Posts')
-        .send({fields: {title: 'Test POST request'}});
+    describe('POST /v0/Posts', () => {
+      let response;
 
-      expect(this.response.statusCode).toBe(200);
-      expect(this.response.body).toBeTruthy();
+      beforeEach(async () => {
+        response = await supertest(server)
+          .post('/v0/Posts')
+          .send({fields: {title: 'Test POST request'}});
+      });
+
+      it('returns successful response', () => expect(response.statusCode).toBe(200));
+      it('contains a response body', () => expect(response.body).toBeTruthy());
     });
 
-    it('Can make PUT request', async () => {
-      const post = (await getExistingPosts(server)).records[0];
+    describe('PUT /v0/Posts/:id', () => {
+      let response;
 
-      this.response = await supertest(server)
-        .put(`/v0/Posts/${post.id}`)
-        .send({fields: {title: 'Test PUT request'}});
+      beforeEach(async () => {
+        const post = (await getExistingPosts(server)).records[0];
+        response = await supertest(server)
+          .put(`/v0/Posts/${post.id}`)
+          .send({fields: {title: 'Test PUT request'}});
+      });
 
-      expect(this.response.statusCode).toBe(200);
-      expect(this.response.body).toBeTruthy();
+      it('returns successful response', () => expect(response.statusCode).toBe(200));
+      it('contains a response body', () => expect(response.body).toBeTruthy());
     });
 
-    it('Can make PATCH request', async () => {
-      const post = (await getExistingPosts(server)).records[0];
+    describe('PATCH /v0/Posts/:id', () => {
+      let response;
 
-      this.response = await supertest(server)
-      .patch(`/v0/Posts/${post.id}`)
-      .send({fields: {title: 'Test PATCH request'}});
+      beforeEach(async () => {
+        const post = (await getExistingPosts(server)).records[0];
+        response = await supertest(server)
+          .patch(`/v0/Posts/${post.id}`)
+          .send({fields: {title: 'Test PATCH request'}});
+      });
 
-      expect(this.response.statusCode).toBe(200);
-      expect(this.response.body).toBeTruthy();
+      it('returns successful response', () => expect(response.statusCode).toBe(200));
+      it('contains a response body', () => expect(response.body).toBeTruthy());
     });
 
-    it('Can make DELETE request', async () => {
-      const post = (await getExistingPosts(server)).records[0];
+    describe('DELETE /v0/Posts/:id', () => {
+      let response;
 
-      this.response = await supertest(server)
-      .delete(`/v0/Posts/${post.id}`);
+      beforeEach(async () => {
+        const post = (await getExistingPosts(server)).records[0];
+        response = await supertest(server).delete(`/v0/Posts/${post.id}`);
+      });
 
-      expect(this.response.statusCode).toBe(200);
-      expect(this.response.body).toBeTruthy();
+
+      it('returns successful response', () => expect(response.statusCode).toBe(200));
+      it('contains a response body', () => expect(response.body).toBeTruthy());
     });
   });
 });

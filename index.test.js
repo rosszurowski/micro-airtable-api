@@ -28,6 +28,10 @@ describeIfEnv('micro-airtable-api', () => {
       client = got.extend({ baseUrl, json: true });
     });
 
+    afterAll(() => {
+      server.close();
+    });
+
     describe('GET /v0/Posts', () => {
       it('returns successful response', async () => {
         await client.get('/v0/Posts');

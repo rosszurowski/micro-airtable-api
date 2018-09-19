@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node bin/index.js",
     "dev": "nodemon -r dotenv/config --ignore '*.test.js' bin/index.js",
-    "prettier": "prettier --write 'index.js' 'src/*.js'",
+    "prettier": "prettier --write 'index.js' 'index.test.js' 'src/*.js'",
     "lint": "prettier --list-different 'index.js' 'src/*.js'",
     "test": "npm run lint --silent && jest"
   },
@@ -16,9 +16,11 @@
   },
   "devDependencies": {
     "dotenv": "^4.0.0",
+    "got": "^9.2.2",
     "jest": "^23.5.0",
     "nodemon": "^1.18.3",
-    "prettier": "1.14.2"
+    "prettier": "1.14.2",
+    "test-listen": "^1.1.0"
   },
   "prettier": {
     "singleQuote": true,
